@@ -26,23 +26,9 @@ class Match implements JsonSerializable{
             throw new Exception("Not a valid MatchGroup");
         }
         
-        if($teamID > 0){
-            $this->teamID = $teamID;
-        }else{
-            throw new Exception("Not a valid Team ID");
-        }
-
-        if($score > 0){
-            $this->score = $score;
-        }else{
-            throw new Exception("Not a valid Score");
-        }
-
-        if($ranking > 0){
-            $this->ranking = $ranking;
-        }else{
-            throw new Exception("Not a valid Ranking");
-        }
+        $this->teamID = $teamID;
+        $this->score = $score;
+        $this->ranking = $ranking;
     }
 
     public function getMatchID(){
@@ -62,10 +48,6 @@ class Match implements JsonSerializable{
     }
     public function getRanking(){
         return $this->ranking;
-    }
-
-    public function jsonSerialize(){
-        return get_object_vars($this);
     }
     private function isValidRoundType($rt){
         $roundTypes = [
@@ -89,5 +71,10 @@ class Match implements JsonSerializable{
         }
         return false;
     }
+
+    public function jsonSerialize(){
+        return get_object_vars($this);
+    }
+    
 }
 ?>

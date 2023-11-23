@@ -29,11 +29,7 @@ class Game implements JsonSerializable{
         }else{
             throw new Exception("Not a valid Game State");
         }
-        if($playerID > 0){
-            $this->playerID = $playerID;
-        }else{
-            throw new Exception("Not a Player ID");
-        }
+        $this->playerID = $playerID;
         $this->score = $score;
         $this->balls = $balls;    
     }

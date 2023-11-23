@@ -78,7 +78,7 @@ function doGet($dAccessor,$action)//Workie Derkie
             $res = $dAccessor->getTeamByID($itemID);
             sendResponse(200, $res, null);
         } else if ($action == "player"){
-            $dAccessor->getPlayerByID($itemID);
+            $res = $dAccessor->getPlayerByID($itemID);
             sendResponse(200, $res, null);
         } else if($action == "game"){
             $res = $dAccessor->getGameByID($itemID);
@@ -122,7 +122,7 @@ function doDelete($dAccessor,$action)//Broken af
                 sendResponse(404, null, "could not delete item - it does not exist");
             }
         } else if ($action == "player"){
-            $menuItemObj = new Player($itemID, "dummyCat", "dummyDesc", 8, 0,6);
+            $menuItemObj = new Player($itemID, 1, "firstName", "lastName", "hometown", "NB");
             $success = $dAccessor->deletePlayer($menuItemObj);
             if ($success) {
                 sendResponse(200, $success, null);
@@ -130,7 +130,7 @@ function doDelete($dAccessor,$action)//Broken af
                 sendResponse(404, null, "could not delete item - it does not exist");
             }
         } else if($action == "game"){
-            $menuItemObj = new Game($itemID, "dummyCat", "dummyDesc", 8, 0, 0, 0);
+            $menuItemObj = new Game($itemID, 1, 1, "AVAILABLE", 0, 0, 0);
             $success = $dAccessor->deleteGame($menuItemObj);
             if ($success) {
                 sendResponse(200, $success, null);
@@ -138,7 +138,7 @@ function doDelete($dAccessor,$action)//Broken af
                 sendResponse(404, null, "could not delete item - it does not exist");
             }
         } else if($action == "match"){
-            $menuItemObj = new Match($itemID, "dummyCat", "dummyDesc", 8, 0,6);
+            $menuItemObj = new Match($itemID, "QUAL", 1, 1, 1,1);
             $success = $dAccessor->deleteMatch($menuItemObj);
             if ($success) {
                 sendResponse(200, $success, null);
@@ -153,7 +153,7 @@ function doDelete($dAccessor,$action)//Broken af
     }
 }
 
-function doPost($dAccessor,$action)//Abolutely fucked
+function doPost($dAccessor,$action)//workie derkie
 {
     if (isset($_GET['id'])) {
         $body = file_get_contents('php://input');

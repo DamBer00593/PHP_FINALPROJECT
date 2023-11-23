@@ -25,7 +25,7 @@ class DataAccessor
 
     private $postTeamString = "insert into team values (:ID, :TeamName)";
     private $postPlayerString = "insert into player values (:ID, :TeamID, :FirstName, :LastName, :Hometown, :ProvinceCode)";
-    private $postGameString = "insert into game game (:ID, :MatchID, :GameNumber, :GameStateID, :Score, :Balls, :PlayerID)";
+    private $postGameString = "insert into game values (:ID, :MatchID, :GameNumber, :GameStateID, :PlayerID, :Score, :Balls)";
     private $postMatchUpString = "insert into matchup values (:ID, :RoundID, :MatchGroup, :TeamID, :Score, :Ranking)";
 
     private $putTeamString = "update team set teamID = :ID, teamName = :TeamName where teamID = :ID";
@@ -248,6 +248,7 @@ class DataAccessor
         }
         catch(Exception $e) {
             $results = [];
+            
         } finally {
             if(!is_null($this->getAllGamesStatement)){
                 $this->getAllGamesStatement->closeCursor();
@@ -265,7 +266,7 @@ class DataAccessor
             foreach($dbresults as $r){
                 $matchID = $r["matchID"];
                 $roundID = $r["roundID"];
-                $matchGroup = $r["matchGroup"];
+                $matchGroup = $r["matchgroup"];
                 $teamID = $r["teamID"];
                 $score = $r["score"];
                 $ranking = $r["ranking"];
@@ -275,6 +276,7 @@ class DataAccessor
         }
         catch(Exception $e) {
             $results = [];
+            throw new Exception($e);
         } finally {
             if(!is_null($this->getAllMatchupStatement)){
                 $this->getAllMatchupStatement->closeCursor();
@@ -298,7 +300,6 @@ class DataAccessor
                 $teamName = $dbresults["teamName"];
                 
                 $object = new Team($teamID, $teamName);
-                return $object;
                 $result = $object;
             }
         }
@@ -329,10 +330,13 @@ class DataAccessor
                 $provinceCode = $dbresults["provinceCode"];
                 $object = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $provinceCode);
                 $result = $object;
+                //$strtemp = $object->jsonSerialize();
+                //throw new Exception(implode(" ",$strtemp));
             }
         }
         catch(Exception $e) {
             $result = null;
+            throw new Exception($e);
         } finally {
             if(!is_null($this->getPlayerByIDStatement)){
                 $this->getPlayerByIDStatement->closeCursor();
@@ -380,7 +384,7 @@ class DataAccessor
             if($dbresults){
                 $matchID = $dbresults["matchID"];
                 $roundID = $dbresults["roundID"];
-                $matchGroup = $dbresults["matchGroup"];
+                $matchGroup = $dbresults["matchgroup"];
                 $teamID = $dbresults["teamID"];
                 $score = $dbresults["score"];
                 $ranking = $dbresults["ranking"];
@@ -389,7 +393,7 @@ class DataAccessor
             }
         }
         catch(Exception $e) {
-            $results = [];
+            $result = null;
         } finally {
             if(!is_null($this->getMatchByIDStatement)){
                 $this->getMatchByIDStatement->closeCursor();
@@ -430,13 +434,14 @@ class DataAccessor
         $teamName = $item->getTeamName();
 
         try{
-            $this->postTeamStatement->bindParam(":ID", $itemID);
+            $this->postTeamStatement->bindParam(":ID", $teamID);
             $this->postTeamStatement->bindParam(":TeamName", $teamName);
 
             $success = $this->postTeamStatement->execute();
             $success = $this->postTeamStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->postTeamStatement)) {
                 $this->postTeamStatement->closeCursor();
@@ -469,6 +474,7 @@ class DataAccessor
             $success = $this->postPlayerStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->postPlayerStatement)) {
                 $this->postPlayerStatement->closeCursor();
@@ -492,18 +498,19 @@ class DataAccessor
         $playerID = $item->getPlayerID();
 
         try{
-            $this->postGameStatement->bindParam(":ID",$playerID);
-            $this->postGameStatement->bindParam(":MatchID",$teamID);
-            $this->postGameStatement->bindParam(":GameNumber",$firstName);
-            $this->postGameStatement->bindParam(":GameStateID",$lastName);
-            $this->postGameStatement->bindParam(":Score",$hometown);
-            $this->postGameStatement->bindParam(":Balls",$provincecode);
-            $this->postGameStatement->bindParam(":PlayerID",$provincecode);
+            $this->postGameStatement->bindParam(":ID",$gameID);
+            $this->postGameStatement->bindParam(":MatchID",$matchID);
+            $this->postGameStatement->bindParam(":GameNumber",$gameNumber);
+            $this->postGameStatement->bindParam(":GameStateID",$gameStateID);
+            $this->postGameStatement->bindParam(":Score",$score);
+            $this->postGameStatement->bindParam(":Balls",$balls);
+            $this->postGameStatement->bindParam(":PlayerID",$playerID);
 
             $success = $this->postGameStatement->execute();
             $success = $this->postGameStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->postGameStatement)) {
                 $this->postGameStatement->closeCursor();
@@ -520,7 +527,7 @@ class DataAccessor
         $success = false;
         $matchID = $item->getMatchID();
         $roundID = $item->getRoundID();
-        $matchGroup = $item->getMatchGroun();
+        $matchGroup = $item->getMatchGroup();
         $teamID = $item->getTeamID();
         $score = $item->getScore();
         $ranking = $item->getRanking();
@@ -537,6 +544,7 @@ class DataAccessor
             $success = $this->postMatchUpStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->postMatchUpStatement)) {
                 $this->postMatchUpStatement->closeCursor();
@@ -550,7 +558,7 @@ class DataAccessor
         START OF PUT SERIES
     */
     public function putTeam($item){
-        if($this->teamExists($item)){
+        if(!$this->teamExists($item)){
             return false;
         }
 
@@ -559,13 +567,14 @@ class DataAccessor
         $teamName = $item->getTeamName();
 
         try{
-            $this->putTeamStatement->bindParam(":ID", $itemID);
+            $this->putTeamStatement->bindParam(":ID", $teamID);
             $this->putTeamStatement->bindParam(":TeamName", $teamName);
 
             $success = $this->putTeamStatement->execute();
             $success = $this->putTeamStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->putTeamStatement)) {
                 $this->putTeamStatement->closeCursor();
@@ -575,7 +584,7 @@ class DataAccessor
     }
 
     public function putPlayer($item){
-        if($this->playerExists($item)){
+        if(!$this->playerExists($item)){
             return false;
         }
         $success = false;
@@ -591,13 +600,14 @@ class DataAccessor
             $this->putPlayerStatement->bindParam(":TeamID",$teamID);
             $this->putPlayerStatement->bindParam(":FirstName",$firstName);
             $this->putPlayerStatement->bindParam(":LastName",$lastName);
-            $this->putPlayerStatement->bindParam(":Hometown",$hometown);
+            $this->putPlayerStatement->bindParam(":HomeTown",$hometown);
             $this->putPlayerStatement->bindParam(":ProvinceCode",$provincecode);
 
             $success = $this->putPlayerStatement->execute();
             $success = $this->putPlayerStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->putPlayerStatement)) {
                 $this->putPlayerStatement->closeCursor();
@@ -608,7 +618,7 @@ class DataAccessor
     }
 
     public function putGame($item){
-        if($this->gameExists($item)){
+        if(!$this->gameExists($item)){
             return false;
         }
         $success = false;
@@ -621,18 +631,19 @@ class DataAccessor
         $playerID = $item->getPlayerID();
 
         try{
-            $this->putGameStatement->bindParam(":ID",$playerID);
-            $this->putGameStatement->bindParam(":MatchID",$teamID);
-            $this->putGameStatement->bindParam(":GameNumber",$firstName);
-            $this->putGameStatement->bindParam(":GameStateID",$lastName);
-            $this->putGameStatement->bindParam(":Score",$hometown);
-            $this->putGameStatement->bindParam(":Balls",$provincecode);
-            $this->putGameStatement->bindParam(":PlayerID",$provincecode);
+            $this->putGameStatement->bindParam(":ID",$gameID);
+            $this->putGameStatement->bindParam(":MatchID",$matchID);
+            $this->putGameStatement->bindParam(":GameNumber",$gameNumber);
+            $this->putGameStatement->bindParam(":GameStateID",$gameStateID);
+            $this->putGameStatement->bindParam(":Score",$score);
+            $this->putGameStatement->bindParam(":Balls",$balls);
+            $this->putGameStatement->bindParam(":PlayerID",$playerID);
 
             $success = $this->putGameStatement->execute();
             $success = $this->putGameStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->putGameStatement)) {
                 $this->putGameStatement->closeCursor();
@@ -643,9 +654,10 @@ class DataAccessor
     }
 
     public function putMatch($item){
-        if($this->matchUpExists($item)){
+        if(!$this->matchUpExists($item)){
             return false;
         }
+
         $success = false;
         $matchID = $item->getMatchID();
         $roundID = $item->getRoundID();
@@ -661,11 +673,12 @@ class DataAccessor
             $this->putMatchStatement->bindParam(":TeamID",$teamID);
             $this->putMatchStatement->bindParam(":Score",$score);
             $this->putMatchStatement->bindParam(":Ranking",$ranking);
-      
+            
             $success = $this->putMatchStatement->execute();
             $success = $this->putMatchStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->putMatchStatement)) {
                 $this->putMatchStatement->closeCursor();
@@ -733,12 +746,13 @@ class DataAccessor
         
 
         try{
-            $this->putGameStatement->bindParam(":ID",$gameID);
+            $this->deleteGameStatement->bindParam(":ID",$gameID);
 
             $success = $this->deleteGameStatement->execute();
             $success = $success && $this->deleteGameStatement->rowCount() === 1;
         } catch (PDOException $e) {
             $success = false;
+            throw new Exception($e);
         } finally {
             if (!is_null($this->deleteGameStatement)) {
                 $this->deleteGameStatement->closeCursor();
