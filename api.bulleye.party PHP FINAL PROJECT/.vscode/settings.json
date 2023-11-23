@@ -1,0 +1,32 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 65520,
+            "driver": "MySQL",
+            "name": "TestConn",
+            "database": "a5hangman",
+            "username": "sqluser",
+            "password": "password",
+            "connectionTimeout": 10000
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "sql.draconiclabs.ca",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "bowlingtournament",
+            "username": "DamianB",
+            "password": "ySv6T9KjS6NedGqVXAy4QrE2#HCkj",
+            "name": "Draconiclabs"
+        }
+    ]
+}
