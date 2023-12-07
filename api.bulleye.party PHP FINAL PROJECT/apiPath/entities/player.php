@@ -1,10 +1,28 @@
 <?php
 class Player implements JsonSerializable{
+    /**
+     * @var playerID stores the Player ID
+     */
     private $playerID;
+    /**
+     * @var teamID stores the team ID
+     */
     private $teamID;
+    /**
+     * @var firstName stores the first name
+     */
     private $firstName;
+    /**
+     * @var lastName stores the Last Name
+     */
     private $lastName;
+    /**
+     * @var hometown stores the hometown
+     */
     private $hometown;
+    /**
+     * @var provinceCode stores the provice code (see isValidProvinceCode)eee
+     */
     private $provinceCode;
 
     public function __construct($playerID, $teamID, $firstName, $lastName, $hometown, $provinceCode){
@@ -46,32 +64,67 @@ class Player implements JsonSerializable{
         }
     }
 
+    /**
+     * Get the Player ID
+     * @return playerID
+     */
     public function getPlayerID(){
         return $this->playerID;
     }
+    /**
+     * Get the Team ID
+     * @return teamID
+     */
     public function getTeamID(){
         return $this->teamID;
     }
+    /**
+     * Get the First Name
+     * @return firstName
+     */
     public function getFirstName(){
         return $this->firstName;
     }
+    /**
+     * Get the Last Name
+     * @return lastName
+     */
     public function getLastName(){
         return $this->lastName;
     }
+    /**
+     * Get the Full name
+     * @return lastName+fullName
+     */
     public function getFullName(){
         return $this->firstname . " " . $this->lastName;
     }
+    /**
+     * Get the Hometown
+     * @return hometown
+     */
     public function getHometown(){
         return $this->hometown;
     }
+    /**
+     * Get the Province Code
+     * @return provinceCode
+     */
     public function getProvinceCode(){
         return $this->provinceCode;
     }
-
+    /**
+     * The implementation of json JsonSerializable
+     * @return get_object_vars($this)
+     */
     public function jsonSerialize(){
         return get_object_vars($this);
     }
-
+    /**
+     * Verifies if the Province Code is one of the 13 for the constructor
+     * @param pc <- the province code to be checked
+     * @return true|false
+     */
     private function isValidProvinceCode($pc){
         $provinceArray = [
             1=>"ON",
