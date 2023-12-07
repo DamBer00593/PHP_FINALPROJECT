@@ -76,7 +76,7 @@ class MatchDataAccessor
                 $teamID = $r["teamID"];
                 $score = $r["score"];
                 $ranking = $r["ranking"];
-                $object = new Match($matchID, $roundID, $matchGroup, $teamID, $score, $ranking);
+                $object = new Matchup($matchID, $roundID, $matchGroup, $teamID, $score, $ranking);
                 array_push($results, $object);
             }
         }
@@ -108,7 +108,7 @@ class MatchDataAccessor
                 $teamID = $dbresults["teamID"];
                 $score = $dbresults["score"];
                 $ranking = $dbresults["ranking"];
-                $object = new Match($matchID, $roundID, $matchGroup, $teamID, $score, $ranking);
+                $object = new Matchup($matchID, $roundID, $matchGroup, $teamID, $score, $ranking);
                 $result = $object;
             }
         }

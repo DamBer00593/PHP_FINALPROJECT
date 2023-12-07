@@ -72,7 +72,7 @@ function doDelete($dAccessor)///Workie derkie
     if (isset($_GET['id'])) {
         $itemID = $_GET['id'];
        
-        $menuItemObj = new Match($itemID, "QUAL", 1, 1, 1,1);
+        $menuItemObj = new Matchup($itemID, "QUAL", 1, 1, 1,1);
         $success = $dAccessor->deleteMatch($menuItemObj);
         if ($success) {
             sendResponse(200, $success, null);
@@ -91,7 +91,7 @@ function doPost($dAccessor)//workie derkie
         $contents = json_decode($body, true);
         
         try {
-            $obj = new Match($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
+            $obj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
             $success = $dAccessor->postMatch($obj);
             if ($success) {
                 sendResponse(201, $success, null);
@@ -112,7 +112,7 @@ function doPut($dAccessor)//Workie derkie
         $contents = json_decode($body, true);
 
         try {
-            $obj = new Match($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
+            $obj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
             $success = $dAccessor->putMatch($obj);
             if ($success) {
                 sendResponse(201, $success, null);

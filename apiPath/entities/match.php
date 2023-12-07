@@ -1,5 +1,5 @@
 <?php
-class Match implements JsonSerializable{
+class Matchup implements JsonSerializable{
     /**
      * @var matchID contains the Match ID
      */
