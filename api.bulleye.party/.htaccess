@@ -1,0 +1,26 @@
+#URL mapping for REST API Demo
+#Note: "NC" means case insensitive
+RewriteEngine on
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+ReWriteRule ^api/v1/team/([0-9]+)$ apiPath/api/teamApi.php?id=$1 [NC]
+ReWriteRule ^api/v1/player/([0-9]+)$ apiPath/api/playerApi.php?id=$1 [NC]
+ReWriteRule ^api/v1/game/([0-9]+)$ apiPath/api/gameApi.php?id=$1 [NC]
+ReWriteRule ^api/v1/match/([0-9]+)$ apiPath/api/matchApi.php?id=$1 [NC]
+
+ReWriteRule ^api/v1/team apiPath/api/teamApi.php [NC]
+ReWriteRule ^api/v1/player apiPath/api/playerApi.php [NC]
+ReWriteRule ^api/v1/game apiPath/api/gameApi.php [NC]
+ReWriteRule ^api/v1/match apiPath/api/matchApi.php [NC]
+
+RewriteRule ^api/v1/auth/user/login/([\w-\.]+@([\w-]+\.)+[\w-]{2,5})$ apiPath/api/userLoginApi.php?id=$1 [NC]
+RewriteRule ^api/v1/auth/user/login/ apiPath/api/userLoginApi.php [NC]
+ReWriteRule ^api/v1/auth/user/([\w-\.]+@([\w-]+\.)+[\w-]{2,5})$ apiPath/api/userApi.php?id=$1 [NC]
+ReWriteRule ^api/v1/auth/user apiPath/api/userApi.php [NC]
+
+
+
+
+
+#ReWriteRule ^temp test.php [NC]
