@@ -17,7 +17,7 @@ class Team implements JsonSerializable{
         if($teamID > 0){
             $this->teamID = $teamID;
         }else{
-            throw new Exception("Not a valid Team   ID");
+            throw new Exception("Not a valid Team ID");
         }
         if(isset($teamName)){
             $this->teamName = $teamName;
