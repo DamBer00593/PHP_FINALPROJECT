@@ -61,7 +61,7 @@ class Game implements JsonSerializable{
         }
         $this->playerID = $playerID;
         $this->score = $score;
-        $this->balls = $balls;    
+        $this->balls = json_decode($balls);    
     }
     /**
      * Get the Game ID
