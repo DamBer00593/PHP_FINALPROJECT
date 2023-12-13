@@ -5,9 +5,9 @@ export class callStuff{
         let stuffs = {
             method: "GET",
             mode: "cors",
-            headers: [
-                "Authentication: Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
-            ]
+            headers: {
+                "Authorization":"Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
+            }
         }
         let things = await fetch(this.url+item, stuffs);
         let thing = await things.json();
@@ -18,9 +18,9 @@ export class callStuff{
         let stuffs = {
             method: "GET",
             mode: "cors",
-            headers: [
-                "Authentication: Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
-            ]
+            headers: {
+                "Authorization":"Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
+            }
         }
         let things = await fetch(this.url+item+"/"+id, stuffs);
         let thing = await things.json();
@@ -31,9 +31,9 @@ export class callStuff{
         let stuffs = {
             method: "POST",
             mode: "cors",
-            headers: [
-                "Authentication: Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
-            ],
+            headers: {
+                "Authorization":"Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
+            },
             body: ob
         }
         let things = await fetch(this.url+item, stuffs);
@@ -45,9 +45,9 @@ export class callStuff{
         let stuffs = {
             method: "DELETE",
             mode: "cors",
-            headers: [
-                "Authentication: Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
-            ],
+            headers: {
+                "Authorization":"Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
+            },
             body: ob
         }
         let things = await fetch(this.url+item, stuffs);
@@ -59,9 +59,9 @@ export class callStuff{
         let stuffs = {
             method: "PUT",
             mode: "cors",
-            headers: [
-                "Authentication: Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
-            ],
+            headers: {
+                "Authorization":"Bearer 8RbYFydpaHA3G*sja4AL7Hkum!5f4tp5"
+            },
             body: ob
         }
         let things = await fetch(this.url+item, stuffs);

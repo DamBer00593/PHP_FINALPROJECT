@@ -4,8 +4,9 @@ import { Login } from "./components/Login"
 import callStuff  from "./classes/callStuff"
 const cs = new callStuff();
 function App() {
-  function testClick(){
-      cs.getItems("team")
+  async function testClick(){
+
+      console.log(await cs.getItems("team"))
   }
   return (
     <div className="App">
@@ -23,7 +24,7 @@ function App() {
           Learn React
         </a>
       </header>
-      {<Login ButtonClick = {testClick()}/>}
+      {<Login ButtonClick = {testClick}/>}
     </div>
   );
 }
