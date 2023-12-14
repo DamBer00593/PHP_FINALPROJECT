@@ -1,30 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+// eslint-disable-next-line
 import { Login } from "./components/Login"
+import { Header } from './components/Header';
 import callStuff  from "./classes/callStuff"
+import { useState } from "react";
+import { AdminPanel } from './components/AdminPanel';
 const cs = new callStuff();
 function App() {
+  let [permissionLevel, setPermissionLevel] = useState("guest")
+  let [currentPage,setCurrentPage] = useState("home")
+  // eslint-disable-next-line
   async function testClick(){
-
       console.log(await cs.getItems("team"))
   }
+  async function handleLoginClick(){
+    setPermissionLevel("admin")
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      {<Login ButtonClick = {testClick}/>}
+      {<Header
+        ButtonClick = {testClick}
+        PermissionLevel = {permissionLevel}
+        processLoginClick = {handleLoginClick}
+        goToAdminClick = {() => setCurrentPage("admin")}
+      />}
+        {(currentPage == "admin")?<AdminPanel/>:""}
     </div>
   );
 }

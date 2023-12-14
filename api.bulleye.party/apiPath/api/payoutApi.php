@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__DIR__, 1) . '/connectionManager.php';
 require_once dirname(__DIR__, 1) . '/constants.php';
-require_once dirname(__DIR__, 1) . '/accessor/gameDataAccessor.php';
+require_once dirname(__DIR__, 1) . '/accessor/payoutDataAccessor.php';
 $setAuthorized = true;
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -14,23 +14,22 @@ if(isset($_SERVER["HTTP_AUTHORIZATION"])){
 else{
     $setAuthorized = false;
 }
-
 /*
 End points defined
-/game - bulk GET
-/game/id - GET
-/game/id - POST, {gameID, matchID, gameNumber, gameStateID, playerID, score, balls}
-/game - POST, bulk post not supported
-/game/id - PUT, {gameID, matchID, gameNumber, gameStateID, playerID, score, balls}
-/game - PUT, bulk put not supported
-/game/id - DELETE
-/game - DELETE, bulk delete not supported
+/payout -  bulk GET
+/payout/id - GET
+/payout/id - POST, not supported
+/payout - POST, bulk post not supported
+/payout/id - PUT, {payoutID, roundID, teamID, amount}
+/payout - PUT, bulk put not supported
+/payout/id - DELETE, not supported
+/payout - DELETE, bulk delete not supported
 */
 
 try {
     if($setAuthorized){
         $cm = new ConnectionManager(Constants::$MYSQL_CONNECTION_STRING, Constants::$MYSQL_USERNAME, Constants::$MYSQL_PASSWORD);
-        $dAccessor = new GameDataAccessor($cm->getConnection());
+        $dAccessor = new PayoutDataAccessor($cm->getConnection());
         if ($method === "GET") {
             doGet($dAccessor);
         } else if ($method === "POST") {
@@ -39,6 +38,8 @@ try {
             doDelete($dAccessor);
         } else if ($method === "PUT") {
             doPut($dAccessor);
+        } else if ($method === "OPTIONS") {
+            sendResponse(200,null,null);
         } else {
             sendResponse(405, null, "method not allowed");
         }
@@ -58,52 +59,24 @@ function doGet($dAccessor)//Workie Derkie
 {
     if (isset($_GET["id"])) {
         $itemID = $_GET['id'];
-        $res = $dAccessor->getGameByID($itemID);
+
+        $res = $dAccessor->getPayoutByID($itemID);
         sendResponse(200, $res, null);
     }
     else {
-        $res = $dAccessor->getAllGames();
+        $res = $dAccessor->getAllPayouts();
         sendResponse(200, $res, null);
     }
 }
 
 function doDelete($dAccessor)///Workie derkie
 {
-    if (isset($_GET['id'])) {
-        $itemID = $_GET['id'];
-        
-            $menuItemObj = new Game($itemID, 1, 1, "AVAILABLE", 0, 0, 0);
-            $success = $dAccessor->deleteGame($menuItemObj);
-            if ($success) {
-                sendResponse(200, $success, null);
-            } else {
-                sendResponse(404, null, "could not delete item - it does not exist");
-            }
-        
-    } else {
-        sendResponse(405, null, "bulk DELETEs not allowed");
-    }
+    sendResponse(403, null, "DELETE not supported")
 }
 
 function doPost($dAccessor)//workie derkie
 {
-    if (isset($_GET['id'])) {
-        $body = file_get_contents('php://input');
-        $contents = json_decode($body, true);
-        try {
-            $obj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStateID'], $contents['score'], $contents['balls'], $contents['playerID']);
-            $success = $dAccessor->postGame($obj);
-            if ($success) {
-                sendResponse(201, $success, null);
-            } else {
-                sendResponse(409, null, "could not insert item - it already exists");
-            }
-        } catch (Exception $e) {
-            sendResponse(400, null, $e->getMessage());
-        }
-    } else {
-        sendResponse(405, null, "bulk INSERTs not allowed");
-    }
+    sendResponse(403, null, "POST not supported")
 }
 function doPut($dAccessor)//Workie derkie
 {
@@ -112,8 +85,8 @@ function doPut($dAccessor)//Workie derkie
         $contents = json_decode($body, true);
 
         try {
-            $obj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStateID'], $contents['score'], $contents['balls'], $contents['playerID']);
-            $success = $dAccessor->putGame($obj);
+            $obj = new Payout($contents['payoutID'],$contents["roundID"], $contents['teamName'], $contents["amount"]);
+            $success = $dAccessor->putPayout($obj);
             if ($success) {
                 sendResponse(201, $success, null);
             } else {
@@ -122,7 +95,6 @@ function doPut($dAccessor)//Workie derkie
         } catch (Exception $e) {
             sendResponse(400, null, $e->getMessage());
         }
-        
     } else {
         sendResponse(405, null, "bulk UPDATEs not allowed");
     }
