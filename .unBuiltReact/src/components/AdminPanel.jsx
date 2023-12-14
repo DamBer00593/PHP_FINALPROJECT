@@ -1,12 +1,15 @@
 import { useState } from "react";
-export function AdminPanel({PermissionLevel, callStuff}){
+export function AdminPanel({PermissionLevel, callStuff, createTable}){
     let [selectedOperation, setSelectedOperation] = useState(null);
-    function senpai(){
+    async function senpai(){
         let operation = selectedOperation;
 
-        if(operation == "team"){
-            
-        } else if (operation = "player"){
+        if(operation === "team"){
+            let resp = callStuff.getItems("team")
+            let test = resp.data;
+            console.log(test)
+            console.log(resp.data.length)
+        } else if (operation === "player"){
 
         }
     }
@@ -17,7 +20,7 @@ export function AdminPanel({PermissionLevel, callStuff}){
             <button onClick = {() => setSelectedOperation("player")}>Player Operations</button>
 
             <div className="bodySomethingorother">
-                {(selectedOperation?senpai():"")}
+                {(selectedOperation?createTable(selectedOperation):"")}
             </div>
         </div>
     )

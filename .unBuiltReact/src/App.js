@@ -16,7 +16,18 @@ function App() {
   async function handleLoginClick(){
     setPermissionLevel("admin")
   }
+  function createTable(selectedOperation){
+    let operation = selectedOperation;
 
+        if(operation === "team"){
+            let resp = callStuff.getItems("team")
+            let test = resp.data;
+            console.log(test)
+            console.log(resp.data.length)
+        } else if (operation === "player"){
+
+        }
+  }
 
   return (
     <div className="App">
@@ -26,7 +37,13 @@ function App() {
         processLoginClick = {handleLoginClick}
         goToAdminClick = {() => setCurrentPage("admin")}
       />}
-        {(currentPage == "admin")?<AdminPanel/>:""}
+        {(currentPage === "admin")?
+        <AdminPanel
+        PermissionLevel = {permissionLevel}
+        callStuff = {cs}
+        createTable = {createTable}
+        />:""
+        }
     </div>
   );
 }
