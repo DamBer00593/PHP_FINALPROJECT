@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__DIR__, 1) . '/connectionManager.php';
 require_once dirname(__DIR__, 1) . '/constants.php';
-require_once dirname(__DIR__, 1) . '/accessor/gameDataAccessor.php';
+require_once dirname(__DIR__, 1) . '/accessor/gameMatchDataAccessor.php';
 $setAuthorized = true;
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -30,7 +30,7 @@ End points defined
 try {
     if($setAuthorized){
         $cm = new ConnectionManager(Constants::$MYSQL_CONNECTION_STRING, Constants::$MYSQL_USERNAME, Constants::$MYSQL_PASSWORD);
-        $dAccessor = new GameDataAccessor($cm->getConnection());
+        $dAccessor = new GameMatchDataAccessor($cm->getConnection());
         if ($method === "GET") {
             doGet($dAccessor);
         } else if ($method === "POST") {
@@ -56,76 +56,24 @@ try {
 
 function doGet($dAccessor)//Workie Derkie
 {
-    if (isset($_GET["id"])) {
-        $itemID = $_GET['id'];
-        $res = $dAccessor->getGameByID($itemID);
-        sendResponse(200, $res, null);
-    }
-    else {
-        $res = $dAccessor->getAllGames();
-        sendResponse(200, $res, null);
-    }
+    
+    $res = $dAccessor->getAllGameMatches();
+    sendResponse(200, $res, null);
+
 }
 
 function doDelete($dAccessor)///Workie derkie
 {
-    if (isset($_GET['id'])) {
-        $itemID = $_GET['id'];
-        
-            $menuItemObj = new Game($itemID, 1, 1, "AVAILABLE", 0, 0, 0);
-            $success = $dAccessor->deleteGame($menuItemObj);
-            if ($success) {
-                sendResponse(200, $success, null);
-            } else {
-                sendResponse(404, null, "could not delete item - it does not exist");
-            }
-        
-    } else {
-        sendResponse(405, null, "bulk DELETEs not allowed");
-    }
+    sendResponse(403, null, "Cannot preform DELETE")
 }
 
 function doPost($dAccessor)//workie derkie
 {
-    if (isset($_GET['id'])) {
-        $body = file_get_contents('php://input');
-        $contents = json_decode($body, true);
-        try {
-            $obj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStateID'], $contents['score'], $contents['balls'], $contents['playerID']);
-            $success = $dAccessor->postGame($obj);
-            if ($success) {
-                sendResponse(201, $success, null);
-            } else {
-                sendResponse(409, null, "could not insert item - it already exists");
-            }
-        } catch (Exception $e) {
-            sendResponse(400, null, $e->getMessage());
-        }
-    } else {
-        sendResponse(405, null, "bulk INSERTs not allowed");
-    }
+    sendResponse(403, null, "Cannot preform POST")
 }
 function doPut($dAccessor)//Workie derkie
 {
-    if (isset($_GET['id'])) {
-        $body = file_get_contents('php://input');
-        $contents = json_decode($body, true);
-
-        try {
-            $obj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStateID'], $contents['score'], $contents['balls'], $contents['playerID']);
-            $success = $dAccessor->putGame($obj);
-            if ($success) {
-                sendResponse(201, $success, null);
-            } else {
-                sendResponse(404, null, "could not update item - it does not exist");
-            }
-        } catch (Exception $e) {
-            sendResponse(400, null, $e->getMessage());
-        }
-        
-    } else {
-        sendResponse(405, null, "bulk UPDATEs not allowed");
-    }
+    sendResponse(403, null, "Cannot preform PUT")
 }
 
 function sendResponse($statusCode, $data, $error)
