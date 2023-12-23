@@ -4,6 +4,12 @@ RewriteEngine on
 RewriteCond %{HTTP:Authorization} .
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+ReWriteRule ^api/v1/gamematch/ apiPath/api/gameMatchApi.php [NC]
+ReWriteRule ^api/v1/gamematch/([0-9]+)$ apiPath/api/gameMatchApi.php?id=$1 [NC]
+
+ReWriteRule ^api/v1/team/([0-9]+)$ apiPath/api/teamApi.php?id=$1 [NC]
+
+
 ReWriteRule ^api/v1/team/([0-9]+)$ apiPath/api/teamApi.php?id=$1 [NC]
 ReWriteRule ^api/v1/player/([0-9]+)$ apiPath/api/playerApi.php?id=$1 [NC]
 ReWriteRule ^api/v1/game/([0-9]+)$ apiPath/api/gameApi.php?id=$1 [NC]
